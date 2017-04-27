@@ -2,34 +2,22 @@
     'use strict';
 
     function equalHeights() {
-        var i;
-        var groups = [];
+        var maxHeight = {};
+
         $('[data-equalize]').each(function() {
             var group = $(this).data('equalize');
-
-            // Check if this group already exists
-            // If not add this group to the array
-            if($.inArray(group,groups) == -1)
-                groups.push(group);
+            maxHeight[group] = Math.max(maxHeight[group] || 0, $(this).height());
         });
 
-        // Loop through the groups and get max height
-        for(i=0; groups.length>i; i++) {
-            var elementGroup = $('[data-equalize='+groups[i]+']');
-            var maxHeight = Math.max.apply(null, elementGroup.map(function () 
-                {
-                    return $(this).height();
-                }
-            ));
-
-            // Set height for the group elements
-            elementGroup.css('min-height', maxHeight);
-        }
+        $('[data-equalize]').each(function() {
+            $(this).css('min-height', maxHeight[$(this).data('equalize')]);
+        });
     }
-    $(document).ready(equalHeights);
+
+    $(window).load(equalHeights);
 
     // Heights may change when text wraps another line.
-    //$(window).resize(equalHeights);
+    // $(window).resize(equalHeights);
     // Use throttling instead
     var doit;
     window.onresize = function(){
